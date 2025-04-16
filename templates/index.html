@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gerador de Arquitetura AWS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col items-center justify-start">
+
+  <main class="w-full max-w-4xl p-6 flex flex-col items-center">
+
+    <h1 class="text-3xl font-bold text-blue-700 mb-6 text-center">Gerador de Arquitetura AWS</h1>
+
+    <form method="POST" class="w-full bg-white p-6 rounded-xl shadow-md mb-6">
+      <label for="prompt" class="block text-lg font-medium mb-2">Descreva a arquitetura desejada:</label>
+      <textarea name="prompt" rows="4" class="w-full p-4 border border-gray-300 rounded-md mb-4" placeholder="Ex: EC2 com RDS e S3 para backups..."></textarea>
+      <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition">⚙️ Gerar Arquitetura</button>
+    </form>
+
+<!-- Exemplos de Prompt -->
+<div class="w-full bg-white p-6 rounded-xl shadow-sm mb-8">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">📌 Exemplos de Prompts (clique para usar)</h2>
+  
+    {% set exemplos = {
+      '🟢 Simples': [
+        "Uma instância EC2 conectada a um banco de dados RDS",
+        "EC2, RDS e S3 conectados em uma aplicação web simples",
+        "Um sistema com Lambda acessando DynamoDB",
+        "EC2 → Application Load Balancer → RDS",
+        "Um bucket S3 servindo arquivos estáticos para usuários da internet"
+      ],
+      '🟡 Intermediário': [
+        "Arquitetura com EC2 em Auto Scaling, balanceamento de carga e RDS Multi-AZ",
+        "VPC com duas subnets públicas e duas privadas, cada uma com EC2, NAT e RDS",
+        "Serviço de backend com ECS Fargate acessando Aurora Serverless",
+        "CloudFront distribuindo conteúdo de um bucket S3 privado com Lambda@Edge",
+        "Servidor web em EC2 se comunicando com RDS, com backups automáticos para S3"
+      ],
+      '🔴 Avançado': [
+        "Arquitetura de microsserviços com API Gateway, Lambda, DynamoDB e SQS",
+        "VPC com NAT Gateway, Internet Gateway, Subnets Públicas e Privadas, Load Balancer, Auto Scaling, EC2, e RDS",
+        "Arquitetura serverless com API Gateway → Lambda → DynamoDB, com S3 para armazenamento de arquivos e SNS para notificações",
+        "Infraestrutura multi-região com replicação entre buckets S3 e banco Aurora Global",
+        "Arquitetura de processamento de dados com Kinesis, Lambda, Glue, e S3"
+      ],
+      '🧪 Prompt criativo': [
+        "Desenhe uma arquitetura onde um frontend em EC2 acessa serviços via API Gateway que redireciona para Lambdas distintas, que por sua vez gravam em um banco DynamoDB. Use S3 para armazenar imagens do frontend e SNS para alertas de erro."
+      ]
+    } %}
+  
+    {% for categoria, prompts in exemplos.items() %}
+      <div class="mb-4">
+        <h3 class="font-semibold mb-2">{{ categoria }}</h3>
+        <div class="flex flex-wrap gap-2">
+          {% for texto in prompts %}
+            <button type="button"
+                    onclick="preencherPrompt(`{{ texto }}`)"
+                    class="bg-gray-100 hover:bg-blue-100 text-sm text-gray-700 border border-gray-300 px-3 py-1 rounded-full transition">
+              {{ texto }}
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+
+
+    {% if codigo %}
+      <div class="w-full bg-gray-100 p-4 rounded-lg shadow-inner mb-6">
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">📜 Código Python Gerado:</h2>
+        <pre class="whitespace-pre-wrap text-sm bg-white p-4 border rounded overflow-auto">{{ codigo }}</pre>
+      </div>
+    {% endif %}
+
+    {% if imagem_gerada %}
+      <div class="w-full text-center mb-6">
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">🖼️ Diagrama Gerado:</h2>
+        <img src="{{ url_for('static_files', filename='diagram.png') }}?v={{ timestamp }}" alt="Diagrama AWS" class="rounded-lg border shadow-md inline-block mb-4 max-w-full" />
+        <br />
+        <a href="{{ url_for('static_files', filename='diagram.png') }}" download class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+          📥 Baixar PNG
+        </a>
+      </div>
+    {% endif %}
+
+    {% if cloudformation %}
+      <div class="w-full bg-gray-100 p-4 rounded-lg shadow-inner">
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">📄 CloudFormation YAML:</h2>
+        <pre class="whitespace-pre-wrap text-sm bg-white p-4 border rounded overflow-auto">{{ cloudformation }}</pre>
+      </div>
+    {% endif %}
+
+  </main>
+
+  <footer class="text-sm text-gray-500 py-6 mt-auto text-center border-t w-full">
+    Desenvolvido por <a href="https://www.linkedin.com/in/pedroguth/" target="_blank" class="text-blue-600 hover:underline">Pedro Guth</a> |
+    <a href="https://github.com/Pedro-Guth" target="_blank" class="text-gray-700 hover:underline">GitHub</a>
+  </footer>
+
+  <script>
+    function preencherPrompt(texto) {
+      const campo = document.querySelector('textarea[name="prompt"]');
+      campo.value = texto;
+      campo.focus();
+    }
+  </script>
+  
+</body>
+</html>
