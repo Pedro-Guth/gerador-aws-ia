@@ -4,3 +4,8 @@ diagrams
 re
 faiss-cpu
 langchain
+langchain_community
+langchain_aws
+fitz
+frontend
+tools
